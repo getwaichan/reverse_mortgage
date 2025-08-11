@@ -1,0 +1,76 @@
+<!-- templates/results.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Reverse Mortgage Calculator - Results</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+    <h1>Financial Metrics Over Time</h1>
+
+    <table style="min-width: 100px">
+        <colgroup>
+            <col style="min-width: 25px" />
+            <col style="min-width: 25px" />
+            <col style="min-width: 25px" />
+            <col style="min-width: 25px" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Loan Balance ($)</th>
+                <th>Home Value ($)</th>
+                <th>Equity ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for metric in metrics %}
+            <tr>
+                <td>{{ metric.Year }}</td>
+                <td>${{ '%.2f'|format(metric.Loan_Balance) }}</td>
+                <td>${{ '%.2f'|format(metric.Home_Value) }}</td>
+                <td>${{ '%.2f'|format(metric.Equity) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Graphical Representation</h3>
+    <div id="chart"></div>
+
+    <script>
+        const years = {{ metrics| map(attribute = 'Year') | list }};
+        const loanBalances = {{ metrics| map(attribute = 'Loan_Balance') | list }};
+        const homeValues = {{ metrics| map(attribute = 'Home_Value') | list }};
+        const equities = {{ metrics| map(attribute = 'Equity') | list }};
+
+        const data = [
+            {
+                x: years,
+                y: loanBalances,
+                type: 'scatter',
+                name: 'Loan Balance'
+            },
+            {
+                x: years,
+                y: homeValues,
+                type: 'scatter',
+                name: 'Home Value'
+            },
+            {
+                x: years,
+                y: equities,
+                type: 'scatter',
+                name: 'Equity'
+            }
+        ];
+
+        const layout = { title: 'Financial Metrics Over Time' };
+
+        Plotly.newPlot('chart', data, layout);
+    </script>
+</body>
+
+</html>
